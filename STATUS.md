@@ -14,14 +14,16 @@ A local `npx`/`pnpm start` web UI (**loopdeck**) to visualize & CRUD the agent-s
 - Goal **locked: `Status: ready`** (`ws/goals/loopdeck.md`); ADRs 0001–0003; CONFIRM reviewed; work plan `ws/loopdeck/plan.md` (11 tasks).
 - **v1 built (`feat/loopdeck-v1`):** all of plan T1–T11 TDD; 53 tests + lint + typecheck + build green; review panel (no Must-fix in code/security; a11y Must-fix fixed in v1); live UX verified — toggle→diff→write is byte-clean on the folded vakio file. Report: `ws/reports/2026-06-15-loopdeck-v1.md`.
 
+- Shipped: public repo **github.com/Jeibniz/loopdeck** created; **PR #1** open (feat/loopdeck-v1 → main).
+
 ## Next
 
-- **CHECKPOINT — needs you:** create the public **`Jeibniz/loopdeck`** repo → push `feat/loopdeck-v1` → PR → merge. Paused here intentionally (outward-facing action).
-- After merge: file `plan.md` Follow-ups as issues (`/tickets bootstrap`).
+- **You: review & merge PR #1.** (Human-merge default.)
+- After merge: `/tickets bootstrap` then file `plan.md` Follow-ups as issues.
 
 ## Blockers
 
-- Ship gate is a human checkpoint: creating the public GitHub repo under `Jeibniz` (gh is authed as `Jeibniz`).
+- (none) — awaiting your merge of PR #1.
 
 ## Key decisions
 
