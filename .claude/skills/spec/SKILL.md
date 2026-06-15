@@ -7,7 +7,7 @@ Turn a fuzzy idea into a sharp, durable, **grounded** spec — by asking, not as
 on real domain knowledge, not improvisation. Front door before `/autopilot`. **Self-contained** (no
 plugin required; uses `superpowers:brainstorming` for the interview if present).
 
-It runs in **two passes around research**, because you can't write a good _solution_ spec before you
+It runs in **two passes around research**, because you can't write a good *solution* spec before you
 understand the domain:
 
 ```
@@ -17,7 +17,7 @@ understand the domain:
 State which pass you're in based on the active goal: no goal / `draft` with no answered agenda → **frame**;
 agenda researched and `docs/domain/CONFIRM.md` reviewed → **refine**.
 
-## Pass 1 — FRAME (capture the product goal + figure out what to learn)
+## Pass 1 — FRAME  (capture the product goal + figure out what to learn)
 
 1. Read `CLAUDE.md`, `STATUS.md`, existing `ws/goals/*`, the code. Never ask what the repo answers.
 2. **Interview — one question at a time** (AskUserQuestion), summarizing back so misunderstandings
@@ -32,13 +32,15 @@ agenda researched and `docs/domain/CONFIRM.md` reviewed → **refine**.
 4. **Stop. Tell the user to run `/research` next.** Don't write detailed acceptance criteria, don't
    plan, don't lock — you don't know enough yet.
 
-## Pass 2 — REFINE + LOCK (write the real, grounded solution spec)
+## Pass 2 — REFINE + LOCK  (write the real, grounded solution spec)
 
 1. Read `docs/domain/` (the corpus) and `docs/domain/CONFIRM.md`. If CONFIRM still has unconfirmed
    high-stakes facts, **stop** and ask the user to review them first.
 2. Refine `ws/goals/<slug>.md`: concrete, **testable acceptance criteria grounded in the corpus**
-   (cite `docs/domain/<topic>.md`), the technical approach, resolved open questions, required inputs.
-   Write an ADR (`docs/decisions/`) for each notable decision, citing the domain facts behind it.
+   (cite `docs/domain/<topic>.md`), the technical approach, resolved open questions, required inputs,
+   and a brief **`## Roadmap / next phases`** — the foreseeable follow-on chunks, *captured, not built*
+   (capture ≠ scope creep; the current slice stays YAGNI). Write an ADR (`docs/decisions/`) for each
+   notable decision. **Also fill in the project `CLAUDE.md`'s "What this is"** while the goal is fresh.
 3. **Readiness gate** — set `Status: ready` only when: criteria are concrete/testable; **Open questions**
    empty; **Required inputs** provided-or-deferred; **and the high-stakes facts in `CONFIRM.md` are
    confirmed**. For a web UI, include a live-UX acceptance criterion (`/ux-cycle` passes).
@@ -46,14 +48,16 @@ agenda researched and `docs/domain/CONFIRM.md` reviewed → **refine**.
    agent), grounded on the corpus → `ws/<slug>/plan.md`. **This always works — it's the baseline.**
    Then **preflight the queue** (`/tickets status`: GitHub remote? `gh` authed? labels present?):
    - **Queue ready** → mirror the plan into the goal's **milestone** as issues (one `type:task
-source:spec` per task, priority, `ready`; `depends on #N` + `blocked` for deps). Issues become the
-     working queue; `plan.md` stays the human-readable overview.
+     source:spec` per task, priority, `ready`; `depends on #N` + `blocked` for deps). Issues become the
+     working queue; `plan.md` stays the human-readable overview. **Also file each `Roadmap / next
+     phases` item as a low-priority `needs-triage` issue (`source:spec`)** — kept OUT of the `ready`
+     queue (autopilot won't auto-build the roadmap), so the next phase is a triage-click, not a re-ask.
    - **Queue not ready** (local-only / no `gh` / no labels) → fine: **`plan.md` IS the queue.** Say so,
-     and note the user can `/tickets bootstrap` once a remote exists. **Never block on the queue.**
+     note the user can `/tickets bootstrap` once a remote exists (then the plan **and** roadmap get
+     filed as issues). **Never block on the queue.**
 5. Tell the user it's `ready`, point at the work list (`/tickets queue`, or `plan.md`), and offer `/autopilot`.
 
 ## Rules
-
 - **Align before building; ground before specifying.** A wrong assumption — or a missing domain fact —
   costs a whole autopilot run.
 - Don't invent answers to product forks or domain facts: forks go to the user (Open questions); facts

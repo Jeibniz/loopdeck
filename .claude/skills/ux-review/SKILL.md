@@ -5,11 +5,10 @@ description: Spin up the running web app, drive it across device viewports with 
 
 # UX Review
 
-Run the app and have the `ux-reviewer` agent _look_ at it across devices and edge cases. You own the
+Run the app and have the `ux-reviewer` agent *look* at it across devices and edge cases. You own the
 **environment** (dev server + browser); the agent owns the **judgment**.
 
 ## Argument → mode
-
 `/ux-review [pr <n> | feature "<name>" | full | since "<when>"]` — default: files changed vs the base branch.
 
 ## Steps
@@ -27,9 +26,9 @@ Run the app and have the `ux-reviewer` agent _look_ at it across devices and edg
    1. **Playwright MCP** (`playwright`) — self-installs Chromium, headless, works on cloud/headless. Preferred.
    2. **chrome-devtools-mcp** — if a system Chrome is present.
    3. **Self-launched headless Playwright** — `npx playwright install chromium`, then drive it.
-      If **none** can run a browser, **STOP and report a loud failure** ("live UX review needs a browser;
-      no driver available") — do **not** fall back to a static-only review and call it done. (Static
-      `web-design-reviewer` is a separate, complementary check, not a substitute.)
+   If **none** can run a browser, **STOP and report a loud failure** ("live UX review needs a browser;
+   no driver available") — do **not** fall back to a static-only review and call it done. (Static
+   `web-design-reviewer` is a separate, complementary check, not a substitute.)
 4. **Launch the dev server** (isolate in a worktree for a branch/PR review):
    ```bash
    # detect pkg manager: pnpm-lock.yaml→pnpm, yarn.lock→yarn, else npm; install if node_modules missing
@@ -44,7 +43,6 @@ Run the app and have the `ux-reviewer` agent _look_ at it across devices and edg
 7. **Tear down** (always, even on failure): stop the dev server; remove the worktree if you made one.
 
 ## Notes
-
 - Read-only review tooling — never commits, deploys, or edits app code (that's `/ux-cycle`).
 - Reports/screenshots stage under `ws/ux-review/` (gitignored), ready to hand to a coding agent.
 - Drivers live in the shared `settings.json` (`playwright` + `chrome-devtools-mcp`). A run that can't

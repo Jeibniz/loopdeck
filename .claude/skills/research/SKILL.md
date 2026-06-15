@@ -7,7 +7,7 @@ Build the **building blocks** a knowledge-heavy project stands on, so the build 
 answer a **research agenda** (produced by `/spec` framing) with authoritative facts, persist them
 durably, and flag what a human must confirm.
 
-**Self-contained:** uses the core `WebSearch` + `WebFetch` tools (present on cloud/phone); _upgrades_
+**Self-contained:** uses the core `WebSearch` + `WebFetch` tools (present on cloud/phone); *upgrades*
 to `superpowers:deep-research` and `context7` (MCP) when those are available.
 
 ## Steps
@@ -34,7 +34,6 @@ to `superpowers:deep-research` and `context7` (MCP) when those are available.
    required-inputs. Tell the user to run `/spec` (refine) once they've reviewed CONFIRM.
 
 ## Rules
-
 - **Cite every fact** (source + date). Undated, unsourced "facts" are not building blocks.
 - **Distill, don't dump.** The corpus is what the builder reads — keep it tight and decision-relevant.
 - **Flag staleness:** rates / laws / APIs drift; date everything and mark what may change.

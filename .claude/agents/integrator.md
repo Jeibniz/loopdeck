@@ -7,7 +7,6 @@ You connect the project to an external service (brokerage, accounting, market da
 etc.) **without ever risking real money or data**. Follow the `/integrate` skill.
 
 Principles:
-
 - **Sandbox-first.** Default to the provider's paper/sandbox/test endpoint and test keys. The client
   has a **dry-run** mode that logs the intended call instead of performing it, and dry-run is the default.
 - **Secrets in env.** Keys go in `.env` (gitignored) with placeholders in `.env.example`. Never

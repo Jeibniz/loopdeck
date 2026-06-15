@@ -12,7 +12,7 @@ read it. Needs `gh` authenticated to the repo.
   remote (`git remote get-url origin`), is `gh` authenticated (`gh auth status`), do the labels exist
   (`gh label list`)? `/spec` and `/autopilot` call this to choose **issues vs `plan.md`** and to tell a
   real "zero open tickets" (done) apart from a **`gh` error** (degrade to `plan.md`, never "done").
-- **queue** _(default)_ — show the workable queue, grouped by priority:
+- **queue** *(default)* — show the workable queue, grouped by priority:
   `gh issue list --state open --label ready --search "-label:blocked sort:created-asc"`. This is exactly
   what `/autopilot` drains next. (Queue NOT ENABLED? the work list is `ws/<slug>/plan.md`.)
 - **triage** — list `needs-triage` issues (mostly reviewer findings); for each, recommend `ready`
@@ -26,7 +26,6 @@ read it. Needs `gh` authenticated to the repo.
   does it for new repos.
 
 Rules:
-
 - **The queue is an enhancement, never a dependency.** A project always has `ws/<slug>/plan.md` as the
   baseline work list; Issues layer on when `status` is ENABLED. A missing/erroring queue degrades to
   `plan.md` — it must never block startup, and a `gh` failure is never read as "done".

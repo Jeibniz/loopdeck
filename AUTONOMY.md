@@ -43,20 +43,19 @@ a fresh session resumes seamlessly.
 
 ## Durable memory (survives session resets)
 
-| File                       | Role                                                                                                                                                                                                                              |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `STATUS.md` (root)         | North-star + current state: goal, what's done, what's next, blockers, key decisions. **Read first, written last** each iteration.                                                                                                 |
-| `ws/goals/<slug>.md`       | A goal: problem, acceptance criteria (machine-checkable where possible), constraints, out-of-scope, checkpoints, **open questions**, **required inputs**, readiness `Status`, definition-of-done. Written by `/spec`.             |
-| `ws/journal.md`            | Append-only log: each entry = what was attempted, the result, decisions, next step.                                                                                                                                               |
-| `docs/decisions/NNNN-*.md` | ADRs — why a path was chosen (not just what changed).                                                                                                                                                                             |
-| `docs/domain/`             | The **building blocks**: curated, cited, confidence-flagged domain facts (`MANIFEST.md` + topic files) from `/research`; `CONFIRM.md` holds high-stakes facts awaiting human sign-off. The build grounds on these and cites them. |
-| **GitHub Issues**          | The **work queue** (the agents' Jira) — spec breakdown, reviewer findings, bugs, follow-ups; milestone = goal. See `TICKETS.md`. The queue is the single source of "what's left".                                                 |
-| `ws/reports/`              | Skimmable per-milestone **run reports** (built / assumed / deviated / unsure / cost / next).                                                                                                                                      |
+| File | Role |
+|------|------|
+| `STATUS.md` (root) | North-star + current state: goal, what's done, what's next, blockers, key decisions. **Read first, written last** each iteration. |
+| `ws/goals/<slug>.md` | A goal: problem, acceptance criteria (machine-checkable where possible), constraints, out-of-scope, checkpoints, **open questions**, **required inputs**, readiness `Status`, definition-of-done. Written by `/spec`. |
+| `ws/journal.md` | Append-only log: each entry = what was attempted, the result, decisions, next step. |
+| `docs/decisions/NNNN-*.md` | ADRs — why a path was chosen (not just what changed). |
+| `docs/domain/` | The **building blocks**: curated, cited, confidence-flagged domain facts (`MANIFEST.md` + topic files) from `/research`; `CONFIRM.md` holds high-stakes facts awaiting human sign-off. The build grounds on these and cites them. |
+| **GitHub Issues** | The **work queue** (the agents' Jira) — spec breakdown, reviewer findings, bugs, follow-ups; milestone = goal. See `TICKETS.md`. The queue is the single source of "what's left". |
+| `ws/reports/` | Skimmable per-milestone **run reports** (built / assumed / deviated / unsure / cost / next). |
 
 Specs/plans from `brainstorming`/`writing-plans` also land in `ws/<topic>/`.
 
 ## Work queue, merge policy, reports (see `TICKETS.md`)
-
 - **One queue, but optional.** All open work is **GitHub Issues** (labels = schema, milestone = goal).
   `/spec` files the breakdown; reviewers file findings (`needs-triage`); you triage (`ready`/close) —
   that's the "what actually gets built" checkpoint; `/autopilot` drains `ready` + unblocked,
@@ -64,6 +63,11 @@ Specs/plans from `brainstorming`/`writing-plans` also land in `ws/<topic>/`.
   dependency:** a project can start local on `ws/<slug>/plan.md` and adopt the queue later
   (`/tickets status` → `bootstrap`); a missing/erroring queue degrades to `plan.md`, and a `gh` failure
   is never read as "done" (see `TICKETS.md`).
+- **New work always enters the queue.** A next phase, a discovered bug, or a user request → **file an
+  issue** (small) or run **`/spec`** (a fresh chunk) — never an untracked manual branch. `/spec`
+  **pre-files the foreseeable roadmap** (the goal's `Roadmap / next phases`) as low-priority
+  `needs-triage` issues, so the next phase is a **triage-click, not a re-ask**, and "what's left" is
+  always visible in the queue rather than stranded in `plan.md` or someone's memory.
 - **Human-merge by default.** Autopilot opens a PR (`Closes #N`), an **independent** agent runs
   `/code-review`, and then **you merge** — unless `--auto-merge` is set (for small / early-stage work).
 - **Never silent at a stop.** A decision/finish/block files a `needs-decision`/done issue **assigned to
@@ -78,8 +82,8 @@ Specs/plans from `brainstorming`/`writing-plans` also land in `ws/<topic>/`.
 - **Phase-gated** — `/autopilot --phase` runs one phase to green, then stops for your sign-off before
   the next. Use while you're still building trust in the system.
 - **Scheduled background (loops)** — declarative cron loops in **`loops.yaml`** (`/loops apply` →
-  `/schedule` routines): _producers_ (ux/tech-debt/dependency/research sweeps) file `needs-triage`
-  tickets on their own cadence; a _consumer_ (`/autopilot --once`) drains `ready` ones, **PR-only**.
+  `/schedule` routines): *producers* (ux/tech-debt/dependency/research sweeps) file `needs-triage`
+  tickets on their own cadence; a *consumer* (`/autopilot --once`) drains `ready` ones, **PR-only**.
   Tighter early, looser as the project matures. Always dry-run / PR-only / stops at checkpoints. See
   [LOOPS.md](./LOOPS.md).
 
@@ -92,7 +96,6 @@ endpoints, and test keys. It NEVER performs a live, irreversible, money-moving, 
 action on its own.
 
 ### Always requires a human checkpoint (the loop STOPS and asks)
-
 - Moving real money / placing real orders / live financial-ledger writes.
 - Sending real communications (email/SMS/push/social) to real people.
 - Deleting data, dropping tables, destructive migrations against real data.
@@ -101,13 +104,12 @@ action on its own.
 - Anything irreversible, or a genuine product trade-off with no obvious right answer.
 
 ### Mechanical enforcement (hooks — see `.claude/hooks/`)
-
-| Hook                   | Event            | Enforces                                                                                                                               |
-| ---------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `guard-destructive`    | PreToolUse(Bash) | blocks `rm -rf /`, force-push to main, ref-less `reset --hard`                                                                         |
-| `guard-sensitive`      | PreToolUse(Bash) | blocks prod deploys, `npm publish`, real-comms, and project-listed live endpoints **unless `LIVE=1`** + the action was human-confirmed |
-| `scan-secrets`         | PreToolUse(Bash) | blocks `git commit` if the staged diff contains secret patterns                                                                        |
-| `require-verification` | PreToolUse(Bash) | blocks `gh pr create` when source changed since the last green test run                                                                |
+| Hook | Event | Enforces |
+|------|-------|----------|
+| `guard-destructive` | PreToolUse(Bash) | blocks `rm -rf /`, force-push to main, ref-less `reset --hard` |
+| `guard-sensitive` | PreToolUse(Bash) | blocks prod deploys, `npm publish`, real-comms, and project-listed live endpoints **unless `LIVE=1`** + the action was human-confirmed |
+| `scan-secrets` | PreToolUse(Bash) | blocks `git commit` if the staged diff contains secret patterns |
+| `require-verification` | PreToolUse(Bash) | blocks `gh pr create` when source changed since the last green test run |
 
 Going live is deliberate: the human sets `LIVE=1` (and/or edits `.claude/sensitive-deny.txt`) and
 confirms. The loop never sets it for itself.
@@ -119,7 +121,7 @@ confirms. The loop never sets it for itself.
 For a web UI, UX review isn't an optional afterthought — it's wired into autopilot at two points:
 
 - **Per iteration (mini cycle):** any iteration that changed UI runs `/ux-review` → fix every `Must
-fix` UX finding → re-review, until clean (≤2 rounds), alongside the static `web-design-reviewer`.
+  fix` UX finding → re-review, until clean (≤2 rounds), alongside the static `web-design-reviewer`.
 - **Per milestone (full cycle):** before a web goal is marked **done**, a full `/ux-cycle` runs across
   the affected surfaces (review → fix → re-review to convergence, one PR). A web goal is **not done**
   until live UX passes.

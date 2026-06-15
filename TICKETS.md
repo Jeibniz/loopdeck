@@ -12,9 +12,8 @@ states, epics, sprints, or boards).
 > blocks startup, and a `gh` failure is **never** mistaken for "no work / done".
 
 ## Labels (the schema)
-
 - **type:** `type:task` · `type:bug` · `type:ux` · `type:chore` · `type:spike`
-- **priority:** `P0` · `P1` · `P2` · `P3` (P0 = blocker)
+- **priority:** `P0` · `P1` · `P2` · `P3`  (P0 = blocker)
 - **source:** `source:spec` · `source:review` · `source:bug` · `source:human`
 - **flow:** `needs-triage` (just filed) · `ready` (triaged, workable) · `blocked` (waiting on a dep/decision)
   · `needs-decision` (a human checkpoint)
@@ -22,7 +21,6 @@ states, epics, sprints, or boards).
 The **queue** = open issues labelled `ready`, not `blocked`. **Closed = done.**
 
 Bootstrap the labels once per repo (`init.sh --github` does this automatically for new repos):
-
 ```bash
 for t in task:1D76DB bug:D73A4A ux:C5DEF5 chore:BFDADC spike:FBCA04; do gh label create "type:${t%%:*}" -c "${t##*:}" -f; done
 for p in P0:B60205 P1:D93F0B P2:FBCA04 P3:0E8A16;            do gh label create "${p%%:*}" -c "${p##*:}" -f; done
@@ -32,10 +30,12 @@ gh label create blocked -c D73A4A -f;      gh label create needs-decision -c B60
 ```
 
 ## Lifecycle
-
-1. **Breakdown** — `/spec` (refine) creates one issue per plan task in the goal's **milestone**,
-   `type:task source:spec` + a priority, labelled `ready`. **Issues replace `plan.md`.** Note deps in
-   the body as `depends on #N` and apply `blocked` until the dep closes.
+1. **Breakdown + roadmap** — `/spec` (refine) creates one issue per plan task in the goal's
+   **milestone**, `type:task source:spec` + a priority, labelled `ready`. **Issues replace `plan.md`.**
+   Note deps in the body as `depends on #N` and apply `blocked` until the dep closes. It **also files
+   the goal's `Roadmap / next phases`** as low-priority `needs-triage` issues — captured but kept out
+   of the `ready` queue, so the next phase is a triage-click, not a manual re-ask (autopilot never
+   auto-builds the roadmap).
 2. **Findings → issues** — every reviewer (`/code-review`, `ux-reviewer`, `web-design-reviewer`,
    `security-reviewer`) has its findings filed as issues: `type:{ux,bug,…} source:review` +
    severity→priority, `needs-triage`. Nothing gets fixed silently or lost.
@@ -47,7 +47,6 @@ gh label create blocked -c D73A4A -f;      gh label create needs-decision -c B60
 6. **Decisions** — a `needs-decision` issue **assigned to you** pings your phone (GitHub app).
 
 ## Recipes
-
 ```bash
 # the queue — what to work next
 gh issue list --state open --label ready --search "-label:blocked sort:created-asc" --json number,title,labels

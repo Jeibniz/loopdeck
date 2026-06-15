@@ -20,31 +20,24 @@ Output:
 ## Code Review
 
 ### Summary
-
 <1–3 sentences: what the change does + overall assessment>
 
 ### Findings
-
 > Only what's worth acting on. Skip empty severities.
 
 **Must fix**
-
 - `file:line` — <issue + why it matters + concrete fix>
 
 **Should fix**
-
 - `file:line` — <issue + suggestion>
 
 **Consider**
-
 - `file:line` — <low-priority observation>
 
 ### Verdict
-
 `approve` | `approve with suggestions` | `request changes`
 
 Rules:
-
 - Cite `file:line` for every finding. Be specific; propose the fix.
 - Don't restate what the code does unless it explains a problem.
 - Don't flag style a linter already enforces, or invent issues to look thorough. Clean code earns a short "looks good."
