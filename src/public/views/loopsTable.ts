@@ -25,14 +25,15 @@ export function renderLoopsTable(project: Project, reload: () => void): HTMLElem
 
   const path = project.loopsPath!;
 
-  // diff-confirm → write, then reload
-  const confirmAndWrite = async (op: LoopOp, title: string): Promise<void> => {
+  // diff-confirm → write, then reload. onCancel lets the caller revert UI state.
+  const confirmAndWrite = async (op: LoopOp, title: string, onCancel?: () => void): Promise<void> => {
     try {
       const preview = await previewLoops(path, op);
       openModal({
         title,
         body: diffView(preview.diff || ' (no changes)'),
         confirmLabel: 'Write changes',
+        onCancel,
         onConfirm: async () => {
           try {
             await writeLoops({ path, mtimeMs: preview.mtimeMs, op });
@@ -58,6 +59,9 @@ export function renderLoopsTable(project: Project, reload: () => void): HTMLElem
     void confirmAndWrite(
       { op: 'updateStage', stage: (stageSel as HTMLSelectElement).value },
       'Change stage',
+      () => {
+        (stageSel as HTMLSelectElement).value = String(file.stage ?? ''); // revert on cancel
+      },
     );
   });
 
@@ -110,7 +114,11 @@ function loopRow(
   index: number,
   confirmAndWrite: (op: LoopOp, title: string) => Promise<void>,
 ): HTMLElement {
-  const toggle = el('input', { type: 'checkbox', checked: loop.enabled });
+  const toggle = el('input', {
+    type: 'checkbox',
+    checked: loop.enabled,
+    'aria-label': `${loop.enabled ? 'Disable' : 'Enable'} ${loop.name}`,
+  });
   toggle.addEventListener('change', (e) => {
     e.preventDefault();
     (toggle as HTMLInputElement).checked = loop.enabled; // revert until confirmed

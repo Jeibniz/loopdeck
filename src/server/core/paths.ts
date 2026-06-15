@@ -4,6 +4,7 @@
 // temp-file + rename so a crash never truncates a real config.
 import { realpath, rename, stat, writeFile, chmod, unlink } from 'node:fs/promises';
 import { basename, dirname, resolve, relative, isAbsolute } from 'node:path';
+import { randomUUID } from 'node:crypto';
 
 export class UnderRootError extends Error {
   constructor(message: string) {
@@ -39,7 +40,7 @@ export async function assertUnderRoot(root: string, candidate: string): Promise<
  *  preserving the existing file mode when present. */
 export async function atomicWrite(filePath: string, text: string): Promise<void> {
   const dir = dirname(filePath);
-  const tmp = resolve(dir, `.loopdeck-${process.pid}-${Date.now()}.tmp`);
+  const tmp = resolve(dir, `.loopdeck-${process.pid}-${randomUUID()}.tmp`);
 
   let mode: number | undefined;
   try {

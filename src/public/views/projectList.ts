@@ -1,5 +1,5 @@
 import type { Project } from '../../server/types.js';
-import { el } from '../ui/dom.js';
+import { activatable, el } from '../ui/dom.js';
 
 export function renderProjectList(projects: Project[], onOpen: (p: Project) => void): HTMLElement {
   if (projects.length === 0) {
@@ -16,11 +16,10 @@ export function renderProjectList(projects: Project[], onOpen: (p: Project) => v
     ]);
     const head = el('h3', {}, [p.name]);
     if (stage) head.append(' ', el('span', { class: `badge stage-${stage}` }, [String(stage)]));
-    return el('div', { class: 'card', onclick: () => onOpen(p) }, [
-      head,
-      el('div', { class: 'relpath' }, [p.relDir]),
-      counts,
-    ]);
+    return activatable(
+      el('div', { class: 'card' }, [head, el('div', { class: 'relpath' }, [p.relDir]), counts]),
+      () => onOpen(p),
+    );
   });
   return el('div', { class: 'cards' }, cards);
 }

@@ -1,7 +1,24 @@
-# 0002. Comment-preserving writes via the `yaml` Document API + diff-confirm
+# 0002. Comment-preserving writes via the `yaml` CST + diff-confirm
 
 - **Date:** 2026-06-15
-- **Status:** accepted
+- **Status:** accepted (revised during build — see Addendum)
+
+## Addendum (2026-06-15, build): use the CST, not the Document API, for writes
+
+The live UX pass caught that the high-level `Document.toString()` **re-folds block
+scalars**: toggling one loop reflowed *both* loops' multi-line `command: >` blocks
+(semantically identical, but a noisy diff touching untouched loops — the opposite of
+this tool's promise). `lineWidth: 0` only made it worse (collapsed folded blocks to
+one long line); no `lineWidth` round-trips folded scalars cleanly.
+
+**Revised decision:** reads/validation use the Document API (`docToLoopsFile` in
+`loopsDoc.ts`); **writes go through the `yaml` CST** (`loopsCst.ts`,
+`editLoopsText`). The CST preserves every untouched token byte-for-byte. In-place
+ops (toggle/stage/updateLoop/deleteLoop) mutate the exact scalar/seq token via
+`CST.setScalarValue` / `items.splice` and re-`CST.stringify`; `addLoop` appends a
+freshly-indented block to the byte-perfect serialization (the seq runs to EOF in all
+real files). Verified: a toggle on the folded vakio fixture changes **exactly one
+line**. Tests: `test/loopsCst.test.ts`.
 
 ## Context
 

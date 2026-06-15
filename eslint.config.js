@@ -12,6 +12,8 @@ const browserGlobals = {
   clearTimeout: 'readonly',
   console: 'readonly',
   Node: 'readonly',
+  KeyboardEvent: 'readonly',
+  MouseEvent: 'readonly',
   HTMLElement: 'readonly',
   HTMLInputElement: 'readonly',
   HTMLTextAreaElement: 'readonly',

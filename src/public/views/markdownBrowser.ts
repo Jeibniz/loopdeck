@@ -1,5 +1,5 @@
 import type { MdRef, Project } from '../../server/types.js';
-import { clear, el } from '../ui/dom.js';
+import { activatable, clear, el } from '../ui/dom.js';
 import { diffView, openModal } from '../ui/modal.js';
 import { toast } from '../ui/toast.js';
 import { ApiError, getFile, writeFrontmatter } from '../api.js';
@@ -28,8 +28,7 @@ export function renderMarkdownBrowser(project: Project): HTMLElement {
   };
 
   const mkTab = (key: 'agents' | 'skills', label: string): HTMLElement => {
-    const t = el('div', { class: `tab ${active === key ? 'active' : ''}` }, [label]);
-    t.addEventListener('click', () => {
+    const t = activatable(el('div', { class: `tab ${active === key ? 'active' : ''}` }, [label]), () => {
       active = key;
       [...tabs.children].forEach((c) => c.classList.remove('active'));
       t.classList.add('active');
@@ -48,12 +47,13 @@ export function renderMarkdownBrowser(project: Project): HTMLElement {
 }
 
 function mdItem(ref: MdRef): HTMLElement {
-  const item = el('div', { class: 'md-item' }, [
-    el('b', {}, [ref.name]),
-    el('div', { class: 'desc' }, [ref.description || '(no description)']),
-  ]);
-  item.addEventListener('click', () => void openMd(ref));
-  return item;
+  return activatable(
+    el('div', { class: 'md-item' }, [
+      el('b', {}, [ref.name]),
+      el('div', { class: 'desc' }, [ref.description || '(no description)']),
+    ]),
+    () => void openMd(ref),
+  );
 }
 
 async function openMd(ref: MdRef): Promise<void> {

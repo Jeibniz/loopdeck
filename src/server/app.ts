@@ -7,7 +7,8 @@ import fastifyStatic from '@fastify/static';
 import { readFile, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { walkSuperFolder } from './core/discover.js';
-import { applyOp, docToLoopsFile, parseLoopsDoc, serialize } from './core/loopsDoc.js';
+import { docToLoopsFile, parseLoopsDoc } from './core/loopsDoc.js';
+import { editLoopsText } from './core/loopsCst.js';
 import { parseMd, setFrontmatter } from './core/frontmatter.js';
 import { isValidStage, validateCron, validateLoopCore } from './core/validate.js';
 import { unifiedDiff } from './core/diff.js';
@@ -31,6 +32,16 @@ class HttpError extends Error {
 export function buildApp(opts: AppOptions): FastifyInstance {
   const root = opts.root;
   const app = Fastify({ logger: false });
+
+  // Reject requests whose Host header isn't loopback — defeats DNS-rebinding,
+  // where a malicious page rebinds a hostname to 127.0.0.1 to reach this API
+  // (docs/domain/local-server-safety.md). Loopback-only tool, so this is safe.
+  app.addHook('onRequest', async (req, reply) => {
+    const host = (req.headers.host ?? '').split(':')[0];
+    if (host && host !== '127.0.0.1' && host !== 'localhost' && host !== '[::1]') {
+      return reply.code(403).send({ error: 'forbidden host' });
+    }
+  });
 
   app.setErrorHandler((err: Error, _req, reply) => {
     if (err instanceof UnderRootError) return reply.code(403).send({ error: err.message });
@@ -106,15 +117,16 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   return app;
 }
 
-/** Parse → validate (optionally) → applyOp → serialize. Pure; no I/O. */
+/** Parse-check → validate (optionally) → CST edit. Pure; no I/O.
+ *  Uses the CST editor (loopsCst) so untouched bytes — crucially folded
+ *  `command: >` blocks — are preserved verbatim (ADR 0002). */
 function computeEdit(before: string, op: LoopOp, validate = false): { after: string } {
   const doc = parseLoopsDoc(before);
   if (doc.errors.length > 0)
     throw new HttpError(400, `unparseable loops.yaml: ${doc.errors[0]!.message}`);
 
   if (validate) validateOp(before, op);
-  applyOp(doc, op); // throws on bad index → 400 via error handler
-  return { after: serialize(doc) };
+  return { after: editLoopsText(before, op) }; // throws on bad index → 400
 }
 
 function validateOp(before: string, op: LoopOp): void {

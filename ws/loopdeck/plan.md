@@ -70,3 +70,13 @@ T1 → {T2, T3, T4, T5, T7} (T3 depends T2; rest parallel) → T6 (deps T3) → 
 
 - Before creating the public `Jeibniz/loopdeck` GitHub repo (T11) — confirm `gh` account/visibility.
 - Any network call or write outside the super-folder (there should be none).
+
+## Follow-ups (deferred from the v1 review panel + UX pass — file as issues once the repo/queue exists)
+
+Review verdict: code & security had **no Must-fix**; web-design Must-fix (keyboard a11y) were **fixed in v1**. Deferred Consider items:
+
+- **a11y polish:** full focus-trap in the modal (baseline focus-move + Escape are done); `role="tablist"/"tab"` on the agents/skills tabs (currently buttons); wrap the 6-col loops table in `overflow-x:auto` for narrow viewports.
+- **diff view:** special-case `+++`/`---`/`@@` lines (currently a full-file diff, no hunking — fine for tiny files).
+- **frontmatter:** preserve CRLF EOL if present (LF assumed); `/api/frontmatter` currently skips the staleness guard — add mtime parity.
+- **server hardening (low):** smaller `bodyLimit`; optionally constrain `/api/file` reads to `loops.yaml` + `.claude/**/*.md`.
+- **fidelity caveat:** editing a *folded* `command` value via `updateLoop` re-emits through `CST.setScalarValue`; single-line commands are clean. Rare (long review prompts aren't retyped in a form).

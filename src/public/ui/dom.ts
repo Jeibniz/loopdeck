@@ -24,6 +24,22 @@ export function clear(node: HTMLElement): void {
   node.replaceChildren();
 }
 
+/** Make a non-button element behave like a button: click + Enter/Space,
+ *  focusable, announced as a button. Returns the element for chaining. */
+export function activatable<T extends HTMLElement>(node: T, handler: () => void): T {
+  node.setAttribute('role', 'button');
+  node.setAttribute('tabindex', '0');
+  node.addEventListener('click', handler);
+  node.addEventListener('keydown', (e) => {
+    const ev = e as KeyboardEvent;
+    if (ev.key === 'Enter' || ev.key === ' ') {
+      ev.preventDefault();
+      handler();
+    }
+  });
+  return node;
+}
+
 export function escapeHtml(s: string): string {
   return s.replace(
     /[&<>"']/g,

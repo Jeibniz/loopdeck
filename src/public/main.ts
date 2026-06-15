@@ -1,5 +1,5 @@
 import type { Project, ScanResult } from '../server/types.js';
-import { clear, el } from './ui/dom.js';
+import { activatable, clear, el } from './ui/dom.js';
 import { ApiError, scan } from './api.js';
 import { renderProjectList } from './views/projectList.js';
 import { renderLoopsTable } from './views/loopsTable.js';
@@ -42,17 +42,10 @@ function render(): void {
 }
 
 function renderDetail(project: Project): void {
-  const back = el(
-    'div',
-    {
-      class: 'crumb',
-      onclick: () => {
-        openDir = null;
-        render();
-      },
-    },
-    ['← all projects'],
-  );
+  const back = activatable(el('div', { class: 'crumb' }, ['← all projects']), () => {
+    openDir = null;
+    render();
+  });
   const title = el('h2', {}, [project.name]);
   if (project.loopsFile?.stage) {
     title.append(
