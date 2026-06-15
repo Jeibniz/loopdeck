@@ -19,14 +19,30 @@ export async function assertUnderRoot(root: string, candidate: string): Promise<
   const rootReal = await realpath(root);
   const abs = isAbsolute(candidate) ? candidate : resolve(rootReal, candidate);
 
-  // Realpath the candidate if it exists, else realpath its parent dir (which
-  // must exist — we only ever write into an existing project dir) and rejoin
-  // the basename. This still defeats symlink-escape on the parent.
+  // Realpath the candidate if it exists, else realpath the nearest EXISTING
+  // ancestor and re-join the not-yet-created tail (supports creating new nested
+  // dirs, e.g. .claude/skills/<new>/SKILL.md). Realpathing the existing ancestor
+  // still defeats symlink-escape.
   let resolved: string;
   try {
     resolved = await realpath(abs);
   } catch {
-    resolved = resolve(await realpath(dirname(abs)), basename(abs));
+    const segments: string[] = [];
+    let cur = abs;
+    for (;;) {
+      segments.unshift(basename(cur));
+      const parent = dirname(cur);
+      if (parent === cur) {
+        resolved = abs; // no existing ancestor (shouldn't happen under a real root)
+        break;
+      }
+      try {
+        resolved = resolve(await realpath(parent), ...segments);
+        break;
+      } catch {
+        cur = parent;
+      }
+    }
   }
 
   const rel = relative(rootReal, resolved);

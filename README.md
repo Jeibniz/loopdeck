@@ -54,12 +54,17 @@ loopdeck [--port <n>] [--root <dir>] [--no-open]
   Document API, so your header comments, inline notes, blank lines, field order and
   folded block scalars survive. Unknown fields (`reviewer`, `routine`, `repo`, …)
   are **always preserved** and `routine` (owned by `/loops apply`) is never touched.
-- **Agents & skills browser** — list and read agent/skill definitions; edit their
-  `name`/`description` frontmatter (the Markdown body is left untouched).
+- **Agents & skills browser** — list, read, and **edit** agent/skill definitions:
+  `name`, `description`, and the full Markdown body.
+- **Ask Claude ✨** — describe a change in plain language and loopdeck calls your
+  **local Claude Code CLI** (your existing subscription — no API key) to draft it:
+  add/modify loops, or create/edit agents and skills. You always see and confirm the
+  diff before anything is written.
 
 ## Safety
 
-- **Local only.** Binds loopback (`127.0.0.1`); no network calls, no auth surface.
+- **Local only.** Binds loopback (`127.0.0.1`); no network calls except the local
+  `claude` CLI you invoke via "Ask Claude"; no auth surface.
 - **Stays in the tree.** Every file path is realpath-checked to live under the
   scanned root; traversal attempts are rejected.
 - **Atomic writes** (temp file + rename) and a staleness guard (409 if the file

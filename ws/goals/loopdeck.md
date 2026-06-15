@@ -1,8 +1,8 @@
 # Goal: loopdeck — visualize & CRUD the agent-scaffold autonomy YAML
 
-- **Slug:** loopdeck **Created:** 2026-06-15 **Status:** ready
+- **Slug:** loopdeck **Created:** 2026-06-15 **Status:** done (live)
 
-> Locked by `/spec` refine (2026-06-15), grounded in `docs/domain/` + ADRs 0001–0003; `CONFIRM.md` reviewed. Ready for `/autopilot`. Work list: `ws/loopdeck/plan.md`.
+> Built, reviewed, shipped — **live** at github.com/Jeibniz/loopdeck (PR #1 merged 2026-06-15, v1.0.0). Grounded in `docs/domain/` + ADRs 0001–0003. Follow-on work (CC assist, editable bodies) on its own branches.
 
 ## Problem / why now
 

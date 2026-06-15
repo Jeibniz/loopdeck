@@ -522,3 +522,42 @@ pre.diff {
   font-family: var(--mono);
   font-size: 12px;
 }
+
+/* assist (Ask Claude) */
+.md-toolbar {
+  margin-bottom: 12px;
+}
+.assist-hint {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+.assist-target {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  word-break: break-all;
+}
+.thinking {
+  padding: 28px 8px;
+  text-align: center;
+  color: var(--accent);
+}
+.thinking::after {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 8px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  border-top-color: transparent;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
