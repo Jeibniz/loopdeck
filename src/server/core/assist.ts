@@ -4,8 +4,22 @@
 // only return text; loopdeck then shows a diff the user confirms before any
 // write (ADR 0002 ethos: nothing lands without a confirmed diff).
 import { spawn } from 'node:child_process';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { AssistKind } from '../types.js';
+
+/** Tools claude is forbidden from using in assist mode — i.e. everything that
+ *  could touch the filesystem, run code, or reach the network. loopdeck only
+ *  wants TEXT back; it applies changes itself after the user confirms a diff. */
+export const DISALLOWED_TOOLS = [
+  'Bash',
+  'Edit',
+  'Write',
+  'NotebookEdit',
+  'WebFetch',
+  'WebSearch',
+] as const;
 
 /** kebab-case a free-text name into a safe file/dir slug. */
 export function slugify(name: string): string {
@@ -71,53 +85,53 @@ export function cleanResponse(out: string): string {
 
 export class ClaudeUnavailableError extends Error {}
 
+/** The exact argv passed to claude. Exported so a test can assert the
+ *  file-touching tools stay disallowed (a silent flag rename would re-enable
+ *  them). `--` ends option parsing; we send the prompt over stdin. */
+export function claudeArgs(): string[] {
+  return ['-p', '--output-format', 'text', '--disallowed-tools', ...DISALLOWED_TOOLS];
+}
+
 /** Run the claude CLI headless, prompt via stdin, file-touching tools off.
- *  Injectable for tests via the `_spawn` param. */
+ *
+ *  Defense-in-depth (security review): claude runs in a throwaway temp dir,
+ *  NOT the user's project — the prompt already embeds all needed content, so
+ *  even if `--disallowed-tools` were ever silently ignored, claude could not
+ *  reach or modify the real project files. Injectable via `_spawn` for tests. */
 export async function runClaude(
   prompt: string,
-  cwd: string,
   timeoutMs = 180_000,
   _spawn = spawn,
 ): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const child = _spawn(
-      'claude',
-      [
-        '-p',
-        '--output-format',
-        'text',
-        '--disallowed-tools',
-        'Bash',
-        'Edit',
-        'Write',
-        'NotebookEdit',
-        'WebFetch',
-        'WebSearch',
-      ],
-      { cwd, stdio: ['pipe', 'pipe', 'pipe'] },
-    );
-    let stdout = '';
-    let stderr = '';
-    const timer = setTimeout(() => {
-      child.kill('SIGKILL');
-      reject(new Error(`claude timed out after ${timeoutMs}ms`));
-    }, timeoutMs);
+  const sandbox = await mkdtemp(join(tmpdir(), 'loopdeck-claude-'));
+  try {
+    return await new Promise<string>((resolve, reject) => {
+      const child = _spawn('claude', claudeArgs(), { cwd: sandbox, stdio: ['pipe', 'pipe', 'pipe'] });
+      let stdout = '';
+      let stderr = '';
+      const timer = setTimeout(() => {
+        child.kill('SIGKILL');
+        reject(new Error(`claude timed out after ${timeoutMs}ms`));
+      }, timeoutMs);
 
-    child.on('error', (err: NodeJS.ErrnoException) => {
-      clearTimeout(timer);
-      if (err.code === 'ENOENT') {
-        reject(new ClaudeUnavailableError('claude CLI not found on PATH'));
-      } else {
-        reject(err);
-      }
+      child.on('error', (err: NodeJS.ErrnoException) => {
+        clearTimeout(timer);
+        if (err.code === 'ENOENT') {
+          reject(new ClaudeUnavailableError('claude CLI not found on PATH'));
+        } else {
+          reject(err);
+        }
+      });
+      child.stdout?.on('data', (d) => (stdout += d));
+      child.stderr?.on('data', (d) => (stderr += d));
+      child.on('close', (code) => {
+        clearTimeout(timer);
+        if (code === 0) resolve(stdout);
+        else reject(new Error(`claude exited ${code}: ${stderr.trim() || stdout.trim()}`));
+      });
+      child.stdin?.end(prompt);
     });
-    child.stdout?.on('data', (d) => (stdout += d));
-    child.stderr?.on('data', (d) => (stderr += d));
-    child.on('close', (code) => {
-      clearTimeout(timer);
-      if (code === 0) resolve(stdout);
-      else reject(new Error(`claude exited ${code}: ${stderr.trim() || stdout.trim()}`));
-    });
-    child.stdin?.end(prompt);
-  });
+  } finally {
+    await rm(sandbox, { recursive: true, force: true });
+  }
 }

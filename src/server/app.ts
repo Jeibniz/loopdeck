@@ -164,7 +164,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
 
     let after: string;
     try {
-      after = cleanResponse(await (opts.runClaude ?? runClaudeCli)(prompt, projDir));
+      after = cleanResponse(await (opts.runClaude ?? runClaudeCli)(prompt));
     } catch (err) {
       if (err instanceof ClaudeUnavailableError) {
         return reply.code(503).send({ error: err.message });

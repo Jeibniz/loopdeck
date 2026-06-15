@@ -21,3 +21,15 @@ Users want to create/manage loops, agents, and skills from the UI by describing 
 - **Anthropic API key:** rejected — the user explicitly wanted the existing subscription.
 - **Auto-apply without confirm:** rejected — violates loopdeck's diff-confirm ethos.
 - **Structured (JSON ops) for loops:** would preserve via CST, but a whole-file approach is uniform across loops/agents/skills/new files and the diff-confirm makes it safe enough for v1.
+
+## Addendum (2026-06-15): sandbox the claude subprocess
+
+A security review flagged that relying solely on `--disallowed-tools` is fragile —
+a future CLI flag rename could silently re-enable Edit/Write/Bash, and claude was
+running with `cwd` = the user's project, so it could have modified files directly,
+bypassing the diff-confirm guarantee. Mitigations:
+- claude now runs in a **throwaway temp dir** (`mkdtemp`, removed in `finally`), not
+  the project — the prompt already embeds all needed content, so even with full tool
+  access the subprocess cannot reach the real project files.
+- The argv is built by `claudeArgs()` and a test asserts every file-touching/network
+  tool stays in `--disallowed-tools` (a rename/drop fails CI).
