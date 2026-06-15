@@ -79,4 +79,4 @@ Review verdict: code & security had **no Must-fix**; web-design Must-fix (keyboa
 - **diff view:** special-case `+++`/`---`/`@@` lines (currently a full-file diff, no hunking — fine for tiny files).
 - **frontmatter:** preserve CRLF EOL if present (LF assumed); `/api/frontmatter` currently skips the staleness guard — add mtime parity.
 - **server hardening (low):** smaller `bodyLimit`; optionally constrain `/api/file` reads to `loops.yaml` + `.claude/**/*.md`.
-- **fidelity caveat:** editing a *folded* `command` value via `updateLoop` re-emits through `CST.setScalarValue`; single-line commands are clean. Rare (long review prompts aren't retyped in a form).
+- **fidelity caveat:** editing a _folded_ `command` value via `updateLoop` re-emits through `CST.setScalarValue`; single-line commands are clean. Rare (long review prompts aren't retyped in a form).

@@ -30,8 +30,15 @@ Format: `## <date> — <task>` then **Attempted / Result / Decisions / Next**.
 - **Next:** `/autopilot` to build.
 
 ## 2026-06-15 — /autopilot: built loopdeck v1
+
 - **Attempted:** Drive the full plan (T1–T11) TDD: core libs → server → frontend → CLI; review panel; live UX.
 - **Result:** v1 complete on `feat/loopdeck-v1`. 53 tests + lint + typecheck + build green. Review panel: code & security **no Must-fix** (path guard verified sound, no proto-pollution, loopback confirmed); web-design Must-fix (keyboard a11y: toggle/modal/clickable-divs) **fixed**. Added DNS-rebinding Host guard + UUID temp files.
 - **Key build decision:** live UX caught that the `yaml` Document stringifier **re-folds `command: >` blocks** (noisy diffs on untouched loops). Reworked WRITES onto the `yaml` **CST** (`loopsCst.ts`) — byte-perfect; a toggle on the folded vakio file changes exactly one line. Reads stay on the Document API. ADR 0002 addendum.
 - **Deviation:** kept ESM (starter default) vs ADR 0003's CJS; static via `import.meta.url`, frontend bundled by esbuild.
 - **Next:** CHECKPOINT — human creates public `Jeibniz/loopdeck` repo → push → PR → merge. Follow-ups logged in plan.md.
+
+## 2026-06-15 — feat: CC assist + editable bodies (live framing)
+- **Attempted:** (A) drop "early" framing → live/shipped + v1.0.0; (B) in-UI "Ask Claude" to create/manage loops·agents·skills via the local claude CLI + diff-confirm; (C) editable agent/skill bodies.
+- **Result:** assist.ts (buildPrompt/cleanResponse/resolveTarget pure + runClaude spawn, tools disallowed), POST /api/assist (injectable, 503 if claude missing), PUT /api/file (under-root, atomic, mkdir parents), frontmatter body editing, "Ask Claude ✨" + "+ New agent/skill ✨" + editable body UI. ADR 0004. 68 tests + lint + typecheck + build green. **Live-verified:** real claude added a producer loop, diff showed only the new lines.
+- **Decision:** whole-file generation + diff-confirm (uniform across loops/agents/skills/new files); did NOT add 'live' to the stage enum (docs-only per your choice).
+- **Next:** PR on feat/cc-assist-and-bodies; merge when CI green.

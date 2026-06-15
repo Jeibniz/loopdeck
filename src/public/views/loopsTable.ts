@@ -3,6 +3,7 @@ import { el } from '../ui/dom.js';
 import { diffView, openModal } from '../ui/modal.js';
 import { toast } from '../ui/toast.js';
 import { ApiError, previewLoops, writeLoops } from '../api.js';
+import { openAssist } from './assist.js';
 
 const STAGES = ['early', 'steady', 'maintenance'];
 
@@ -26,7 +27,11 @@ export function renderLoopsTable(project: Project, reload: () => void): HTMLElem
   const path = project.loopsPath!;
 
   // diff-confirm → write, then reload. onCancel lets the caller revert UI state.
-  const confirmAndWrite = async (op: LoopOp, title: string, onCancel?: () => void): Promise<void> => {
+  const confirmAndWrite = async (
+    op: LoopOp,
+    title: string,
+    onCancel?: () => void,
+  ): Promise<void> => {
     try {
       const preview = await previewLoops(path, op);
       openModal({
@@ -67,15 +72,35 @@ export function renderLoopsTable(project: Project, reload: () => void): HTMLElem
 
   const head = el('div', { class: 'detail-head' }, [
     el('div', { class: 'stage-row' }, ['stage:', stageSel]),
-    el(
-      'button',
-      {
-        class: 'btn primary',
-        onclick: () =>
-          openLoopForm(null, (loop) => confirmAndWrite({ op: 'addLoop', loop }, 'Add loop')),
-      },
-      ['+ Add loop'],
-    ),
+    el('div', { class: 'row-actions' }, [
+      el(
+        'button',
+        {
+          class: 'btn',
+          onclick: () =>
+            openAssist(
+              {
+                kind: 'loops',
+                projectDir: project.dir,
+                targetPath: path,
+                title: 'Ask Claude about these loops',
+                placeholder: 'e.g. add a weekly dependency-check producer at 4am Mondays',
+              },
+              reload,
+            ),
+        },
+        ['Ask Claude ✨'],
+      ),
+      el(
+        'button',
+        {
+          class: 'btn primary',
+          onclick: () =>
+            openLoopForm(null, (loop) => confirmAndWrite({ op: 'addLoop', loop }, 'Add loop')),
+        },
+        ['+ Add loop'],
+      ),
+    ]),
   ]);
   wrap.append(head);
 

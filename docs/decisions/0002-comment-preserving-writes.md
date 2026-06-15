@@ -6,7 +6,7 @@
 ## Addendum (2026-06-15, build): use the CST, not the Document API, for writes
 
 The live UX pass caught that the high-level `Document.toString()` **re-folds block
-scalars**: toggling one loop reflowed *both* loops' multi-line `command: >` blocks
+scalars**: toggling one loop reflowed _both_ loops' multi-line `command: >` blocks
 (semantically identical, but a noisy diff touching untouched loops — the opposite of
 this tool's promise). `lineWidth: 0` only made it worse (collapsed folded blocks to
 one long line); no `lineWidth` round-trips folded scalars cleanly.

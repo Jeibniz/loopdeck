@@ -30,9 +30,9 @@ function rootMap(tokens: Token[]): CST.BlockMap {
 }
 
 function findEntry(map: CST.BlockMap, key: string): CollItem | undefined {
-  return map.items.find(
-    (it) => it.key && CST.isScalar(it.key) && it.key.source === key,
-  ) as CollItem | undefined;
+  return map.items.find((it) => it.key && CST.isScalar(it.key) && it.key.source === key) as
+    | CollItem
+    | undefined;
 }
 
 function loopsSeq(map: CST.BlockMap): CST.BlockSequence {
@@ -61,9 +61,7 @@ function setField(map: CST.BlockMap, key: string, value: string): void {
 }
 
 function removeField(map: CST.BlockMap, key: string): void {
-  const idx = map.items.findIndex(
-    (it) => it.key && CST.isScalar(it.key) && it.key.source === key,
-  );
+  const idx = map.items.findIndex((it) => it.key && CST.isScalar(it.key) && it.key.source === key);
   if (idx >= 0) map.items.splice(idx, 1);
 }
 

@@ -58,7 +58,7 @@ function renderDetail(project: Project): void {
   app.append(back, el('div', { class: 'detail-head' }, [title]));
   app.append(renderLoopsTable(project, () => void refresh()));
   app.append(el('h2', { style: 'margin-top:32px;font-size:16px;' }, ['Agents & Skills']));
-  app.append(renderMarkdownBrowser(project));
+  app.append(renderMarkdownBrowser(project, () => void refresh()));
 }
 
 void refresh();

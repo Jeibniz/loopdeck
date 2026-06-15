@@ -84,6 +84,37 @@ export interface FrontmatterWriteRequest {
   mtimeMs: number;
   name: string;
   description: string;
+  /** When present, replaces the Markdown body too (editable bodies). */
+  body?: string;
+}
+
+// ── Claude-assist (prompt CC to create/manage loops, agents, skills) ──
+export type AssistKind = 'loops' | 'agent' | 'skill';
+
+export interface AssistRequest {
+  kind: AssistKind;
+  /** Project root dir (used to resolve a new file's path + as claude cwd). */
+  projectDir: string;
+  /** Existing file to edit; omit to create a new agent/skill. */
+  targetPath?: string;
+  /** Name for a NEW agent/skill (slugified into the path). */
+  newName?: string;
+  instruction: string;
+}
+
+export interface AssistResult {
+  targetPath: string;
+  before: string;
+  after: string;
+  diff: string;
+  isNew: boolean;
+}
+
+export interface FileWriteRequest {
+  path: string;
+  content: string;
+  /** Optional staleness guard for edits (omit for brand-new files). */
+  mtimeMs?: number;
 }
 
 export interface PreviewResult {

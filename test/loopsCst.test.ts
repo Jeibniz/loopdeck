@@ -53,7 +53,13 @@ describe('CST edits preserve folded block scalars byte-for-byte', () => {
     const before = read('vakio');
     const after = editLoopsText(before, {
       op: 'addLoop',
-      loop: { name: 'new-sweep', kind: 'producer', command: '/review', cron: '0 5 * * 2', enabled: false },
+      loop: {
+        name: 'new-sweep',
+        kind: 'producer',
+        command: '/review',
+        cron: '0 5 * * 2',
+        enabled: false,
+      },
     });
     // parses back cleanly with the new loop present
     const file = docToLoopsFile(parseLoopsDoc(after));
@@ -69,7 +75,13 @@ describe('CST edits preserve folded block scalars byte-for-byte', () => {
     const after = editLoopsText(before, {
       op: 'updateLoop',
       index: 0,
-      loop: { name: 'implement', kind: 'consumer', command: '/autopilot --once --auto-merge', cron: '0 3 * * *', enabled: false },
+      loop: {
+        name: 'implement',
+        kind: 'consumer',
+        command: '/autopilot --once --auto-merge',
+        cron: '0 3 * * *',
+        enabled: false,
+      },
     });
     const file = docToLoopsFile(parseLoopsDoc(after));
     const impl = file.loops.find((l) => l.name === 'implement')!;

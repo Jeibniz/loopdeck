@@ -1,5 +1,8 @@
 // Typed fetch wrappers around the loopdeck API.
 import type {
+  AssistRequest,
+  AssistResult,
+  FileWriteRequest,
   FrontmatterWriteRequest,
   LoopOp,
   LoopsWriteRequest,
@@ -77,4 +80,24 @@ export async function writeFrontmatter(
       body: JSON.stringify(req),
     }),
   )) as { ok: boolean; diff: string };
+}
+
+export async function assist(req: AssistRequest): Promise<AssistResult & { mtimeMs?: number }> {
+  return (await jsonOrThrow(
+    await fetch('/api/assist', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(req),
+    }),
+  )) as AssistResult & { mtimeMs?: number };
+}
+
+export async function writeFile(req: FileWriteRequest): Promise<{ ok: boolean; mtimeMs: number }> {
+  return (await jsonOrThrow(
+    await fetch('/api/file', {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(req),
+    }),
+  )) as { ok: boolean; mtimeMs: number };
 }

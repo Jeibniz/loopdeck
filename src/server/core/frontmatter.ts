@@ -34,8 +34,14 @@ export function parseMd(text: string): ParsedMd {
   };
 }
 
-/** Return new file text with name/description updated, body untouched. */
-export function setFrontmatter(text: string, name: string, description: string): string {
+/** Return new file text with name/description updated. The body is replaced
+ *  when `body` is provided, otherwise kept exactly as-is. */
+export function setFrontmatter(
+  text: string,
+  name: string,
+  description: string,
+  body?: string,
+): string {
   const m = text.match(FENCE);
   if (!m) {
     throw new Error('file has no frontmatter block');
@@ -44,7 +50,7 @@ export function setFrontmatter(text: string, name: string, description: string):
   doc.set('name', name);
   doc.set('description', description);
   const newFm = doc.toString({ lineWidth: 0 }).replace(/\n$/, '');
-  const body = text.slice(m[0].length);
-  // Reassemble with canonical fences; body kept exactly as-is.
-  return `---\n${newFm}\n---\n${body}`;
+  const newBody = body !== undefined ? body : text.slice(m[0].length);
+  // Reassemble with canonical fences.
+  return `---\n${newFm}\n---\n${newBody}`;
 }
