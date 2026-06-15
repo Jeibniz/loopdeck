@@ -1,0 +1,39 @@
+# loops.yaml — scheduled autonomy for this project (read by /loops; a future UI manages this).
+# Producers file `needs-triage` tickets on their own cadence; the consumer drains `ready` ones.
+# Cadences are deliberately TIGHTER early and loosen as the project matures — see LOOPS.md.
+# Everything starts disabled: review, enable what fits, then run `/loops apply`.
+
+stage: early # early | steady | maintenance — a hint; you set the cron below
+
+loops:
+  # CONSUMER — drains the ready ticket queue, one ticket per run, PR-only (you merge). The engine.
+  - name: implement
+    kind: consumer
+    command: "/autopilot --once"
+    cron: "0 2 * * *" # early: daily 02:00 · steady: weekly · maintenance: on-demand
+    enabled: false # turn on once the queue has `ready` tickets
+
+  # PRODUCERS — each a cheap, bounded pass that only files issues.
+  - name: tech-debt-sweep
+    kind: producer
+    command: "/review branch; file findings as needs-triage issues"
+    cron: "0 2 * * 1" # weekly, Mon 02:00
+    enabled: false
+
+  - name: dependency-check
+    kind: producer
+    command: "check outdated deps; file chore issues"
+    cron: "0 3 * * 1" # weekly, Mon 03:00
+    enabled: false
+
+  - name: ux-sweep
+    kind: producer
+    command: "/ux-review full" # needs a runnable UI — no-op until then
+    cron: "0 2 * * 3" # weekly, Wed 02:00
+    enabled: false
+
+  - name: research-scan
+    kind: producer
+    command: "/research <watch topics>" # domain / competitor drift
+    cron: "0 4 1 * *" # monthly, 1st @ 04:00
+    enabled: false

@@ -1,0 +1,44 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Node / TypeScript (runs only if package.json exists) ---
+      - name: Set up Node
+        if: ${{ hashFiles('package.json') != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Node — install & check
+        if: ${{ hashFiles('package.json') != '' }}
+        run: |
+          set -e
+          if [ -f pnpm-lock.yaml ]; then corepack enable; PM=pnpm; pnpm install --frozen-lockfile;
+          elif [ -f yarn.lock ]; then corepack enable; PM=yarn; yarn install --frozen-lockfile;
+          else PM=npm; npm ci || npm install; fi
+          has() { grep -qE "\"$1\"[[:space:]]*:" package.json; }
+          has lint  && $PM run lint  || echo "no lint script — skipping"
+          has build && $PM run build || echo "no build script — skipping"
+          has test  && $PM test      || echo "no test script — skipping"
+
+      # --- Python (runs only if pyproject.toml / requirements-dev.txt exists) ---
+      - name: Set up Python
+        if: ${{ hashFiles('pyproject.toml') != '' || hashFiles('requirements-dev.txt') != '' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python — install & check
+        if: ${{ hashFiles('pyproject.toml') != '' || hashFiles('requirements-dev.txt') != '' }}
+        run: |
+          set -e
+          python -m pip install -U pip
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; else pip install ruff pytest; fi
+          ruff check .
+          pytest -q

@@ -1,0 +1,21 @@
+# deps & build
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+
+# env & secrets — never commit
+.env
+.env.*
+!.env.example
+
+# editor / OS
+.DS_Store
+*.log
+
+# per-project Claude overrides (machine-specific)
+.claude/settings.local.json
+
+# autonomy scratch (STATUS.md, ws/goals, ws/journal.md ARE committed; these are not)
+ws/.verify/
+ws/ux-review/
