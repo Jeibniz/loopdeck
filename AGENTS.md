@@ -14,7 +14,7 @@ Generic working agreement for any project scaffolded from `_agent-scaffold`. It 
 
 ## Naming: describe the change, not the schedule
 
-Branches, commits, PR titles, comments, and TODOs describe *what changed*, not internal scheduling labels ("Phase 2", "Sprint 3", "v2 milestone"). Future readers lack that context.
+Branches, commits, PR titles, comments, and TODOs describe _what changed_, not internal scheduling labels ("Phase 2", "Sprint 3", "v2 milestone"). Future readers lack that context.
 
 - Branch: `feat/csv-export`, not `phase2/export`.
 - TODO: `// TODO: drop once callers migrated (#123)`, not `// fixed later in phase 2`.

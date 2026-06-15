@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>loopdeck</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand"><span class="logo">◇</span> loopdeck</div>
+      <div class="root-path" id="root-path"></div>
+    </header>
+    <main id="app" class="app">
+      <div class="loading">Scanning…</div>
+    </main>
+    <footer class="footer" id="footer">
+      loopdeck edits files only — run <code>/loops apply</code> in Claude Code to reconcile.
+    </footer>
+    <div id="modal-root"></div>
+    <div id="toast-root"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
