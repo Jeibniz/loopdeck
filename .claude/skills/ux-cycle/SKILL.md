@@ -9,6 +9,7 @@ Manager of the UX loop: define scope, run `ux-reviewer`, get the user's pick of 
 `implementer` → `ux-reviewer` until converged, and open one PR. Runs in the main conversation.
 
 ## Argument
+
 `/ux-cycle [mode] [target]` — same modes as `/ux-review`.
 
 ## Steps
@@ -33,6 +34,7 @@ Manager of the UX loop: define scope, run `ux-reviewer`, get the user's pick of 
    remove the worktree.
 
 ## Rules
+
 - One batched PR per cycle. Frontend-only by default; allow backend source edits only if the user says so.
 - Sandbox-first / read-only against anything that performs real actions (see `AUTONOMY.md`).
 - Reports/screenshots under `ws/ux-review/` (gitignored); only code fixes are committed.

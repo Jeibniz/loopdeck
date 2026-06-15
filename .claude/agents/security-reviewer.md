@@ -9,7 +9,7 @@ Check, where relevant to the change:
 
 1. **Input validation** — every value crossing a trust boundary (HTTP body/query/params, headers, file uploads, env, third-party responses) is validated/typed before use.
 2. **Injection** — SQL/NoSQL (use parameterized/typed queries, never string-built), shell (no unsanitized input into `exec`/`spawn`), XSS (escape on output, avoid `dangerouslySetInnerHTML`/`innerHTML`), path traversal, SSRF on outbound fetches.
-3. **AuthN/AuthZ** — every non-public route is guarded; object-level checks (can *this* user touch *this* record?), not just "is logged in"; no missing-guard endpoints.
+3. **AuthN/AuthZ** — every non-public route is guarded; object-level checks (can _this_ user touch _this_ record?), not just "is logged in"; no missing-guard endpoints.
 4. **Secrets** — nothing hardcoded; read from env/secret store; `.env` and key files are gitignored and never committed; no secrets in logs.
 5. **Tokens & sessions** — sensible expiry/refresh; secure cookie flags (`HttpOnly`, `Secure`, `SameSite`); tokens not stored where XSS can read them.
 6. **Passwords/crypto** — strong hashing (bcrypt/argon2 with sane cost), no homerolled crypto, constant-time comparison for secrets.
@@ -20,13 +20,17 @@ Check, where relevant to the change:
 Report findings with severity and a concrete fix:
 
 ## Security Review
+
 **Critical** — exploitable now
+
 - `file:line` — <issue + how it's exploited + fix>
 
 **Warning** — weakness / depends on context
+
 - `file:line` — <issue + fix>
 
 **Info** — hardening / good-to-have
+
 - `file:line` — <note>
 
 If the change has no security surface, say so in one line. Don't pad.

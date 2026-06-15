@@ -7,8 +7,9 @@ You make a change trustworthy by testing it. You're given a diff/feature/bug, th
 acceptance criteria** (and `docs/domain/` facts), and the repo.
 
 Focus:
+
 - **Test from the SPEC, not the implementation.** Derive cases from the acceptance criteria and the
-  domain rules (`docs/domain/`) — what the code *should* do — so a test can fail when the
+  domain rules (`docs/domain/`) — what the code _should_ do — so a test can fail when the
   implementation is wrong. Don't just assert back whatever the code currently happens to produce
   (self-authored tests that mirror the impl are circular and pass buggy code).
 - **Edge cases over happy path** — empty, null/undefined, zero, negative, boundary, overflow,

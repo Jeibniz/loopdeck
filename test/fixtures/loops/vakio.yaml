@@ -1,0 +1,48 @@
+# loops.yaml — scheduled review producers for Vakio (read by /loops).
+#
+# Each producer runs a self-contained review over RECENT changes and files GitHub issues into the
+# target repo, reusing the repo's label taxonomy (area:* / P1-P3 / bug / enhancement) plus an `agent`
+# marker. PRODUCERS ONLY — no autopilot consumer; Vakio dev stays human-driven. The team triages and
+# picks up the issues. Toggle `enabled` + run `/loops apply` (creates cloud /schedule routines).
+#
+# Prompts are deliberately SELF-CONTAINED (the embedded checks) so a lone cloud routine works without
+# the symlinked reviewer-agent files. Tighter cadence early is fine; loosen if noisy.
+
+stage: early
+repo: vakilabs/vakio-platform # default target for filed issues
+
+loops:
+  - name: security-sweep
+    kind: producer
+    reviewer: security-reviewer
+    cron: '7 6 * * 1' # weekly, Mon ~06:07 Stockholm → deployed UTC "7 4 * * 1"
+    enabled: true
+    # routine: NOT YET DEPLOYED — create at claude.ai/code/routines (API create from here failed
+    # 2026-06-15: the /schedule env IDs were invalid). Paste this cron/prompt there + pick a real env.
+    command: >
+      Weekly security review of vakilabs/vakio-platform. Look at changes merged to main in the last 7
+      days (git log --since='7 days ago' --merges and the diffs). Flag genuine, reachable security
+      issues: admin-api controllers must use AuthGuard(['jwt','admin-session']) (bearer-only silently
+      401s SSO admins); missing input validation on DTOs; SQL injection via raw queries; committed
+      secrets; missing rate-limiting / CORS gaps; unsafe handling of user input. For each real finding
+      NOT already an open issue (check: gh issue list -R vakilabs/vakio-platform --label agent), run
+      gh issue create -R vakilabs/vakio-platform with labels area:security, a severity (P1/P2/P3), and
+      agent; include file:line + a suggested fix. Dedupe; prefer a few high-signal issues; if nothing
+      material, file nothing and say so. READ-ONLY — no code, PRs, gateway, or deploy commands.
+
+  - name: web-design-sweep
+    kind: producer
+    reviewer: web-design-reviewer
+    cron: '17 6 * * 1' # weekly, Mon ~06:17 Stockholm → deployed UTC "17 4 * * 1"
+    enabled: true
+    # routine: NOT YET DEPLOYED — create at claude.ai/code/routines (see security-sweep note above).
+    command: >
+      Weekly design-system review of vakilabs/vakio-platform apps/web + apps/admin-web. Look at the
+      last 7 days of changes under those paths. Flag genuine design-system / a11y / responsive issues:
+      hand-rolled components that should reuse Vk primitives; wrong Vk prop names; missing `numeric` on
+      VkText numbers; hardcoded user-facing strings (should be i18n, keys in both en + sv); ad-hoc
+      colors instead of semantic tokens; mobile-rule violations (single `md` breakpoint). For each real
+      finding NOT already an open issue (gh issue list -R vakilabs/vakio-platform --label agent), run
+      gh issue create -R vakilabs/vakio-platform with the right area:* label (e.g. area:admin-web), a
+      severity (P2/P3), and agent; include file:line + a suggested fix. Dedupe; high-signal only.
+      READ-ONLY — no code, PRs, gateway, or deploy commands.

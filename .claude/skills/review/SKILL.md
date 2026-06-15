@@ -12,7 +12,7 @@ Steps:
    - `git diff --cached` (staged — pre-commit review)
    - `git fetch` then `git diff <base>...HEAD` (branch — pre-PR review; default base `origin/main`)
    - `git log <base>...HEAD --oneline`
-   If both diffs are empty, tell the user and stop.
+     If both diffs are empty, tell the user and stop.
 
 2. Read the surrounding source where the diff alone is ambiguous.
 
@@ -31,9 +31,11 @@ Steps:
 4. Output:
 
 ---
+
 ## Code Review
 
 ### Summary
+
 <1–3 sentences: what the change does + overall assessment>
 
 ### Issues
@@ -41,19 +43,23 @@ Steps:
 > Only list issues worth acting on. Skip empty sections.
 
 #### Must fix
+
 - `path/to/file.ts:42` — <issue and why it matters>
 
 #### Should fix
+
 - `path/to/file.ts:17` — <issue and suggestion>
 
 #### Consider
+
 - `path/to/file.ts:88` — <low-priority observation>
 
 ### Verdict
-`approve` | `approve with suggestions` | `request changes`
----
+
+## `approve` | `approve with suggestions` | `request changes`
 
 Rules:
+
 - Be direct and specific — cite `file:line` for every issue.
 - Don't restate what the code does unless it explains a problem.
 - Don't flag style the linter doesn't enforce.

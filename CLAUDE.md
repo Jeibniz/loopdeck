@@ -47,23 +47,23 @@ python src/greet.py          # run
 
 ## Automation (active via the vendored .claude/)
 
-| Kind | Name | What it does |
-|------|------|--------------|
-| Hook | `format-on-edit` | Prettier-formats each file as it's written (venv `ruff` for `.py`). Best-effort, non-blocking. |
-| Hook | `guard-destructive` | Blocks `rm -rf /`, force-push to main/master, `git reset --hard` with no ref. |
-| Hook | `guard-sensitive` | Sandbox-first gate: blocks prod deploys / publish / project-listed live actions unless `LIVE=1`. |
-| Hook | `scan-secrets` | Blocks `git commit` when the staged diff adds an env file or secret-looking content. |
-| Hook | `require-verification` | Blocks `gh pr create` when source changed since the last green test run (marker `ws/.verify/PASS`). |
-| Skill | `/spec` `/research` `/autopilot` | Frame → research (→ `docs/domain/`) → refine (grounded, gated), then self-drive. |
-| Skill | `/commit` `/pr` `/review` `/test` `/format` `/ship` | The build→ship lifecycle. |
-| Skill | `/ux-review` `/ux-cycle` | Live UX review of the running web app, and the review→fix→re-review loop to a PR. |
-| Skill | `/integrate` | Wire an external service safely (sandbox-first, secrets in env). |
-| Skill | `/tickets` | The work queue (GitHub Issues): status · queue · triage · file · bootstrap. See `TICKETS.md`. |
-| Skill | `/loops` | Scheduled-autonomy loops from `loops.yaml` → `/schedule` routines. See `LOOPS.md`. |
-| Agent | `planner` `researcher` `implementer` `tester` `debugger` `integrator` `verifier` | The research/build/verify roster (see ORCHESTRATION.md). |
-| Agent | `code-reviewer` `security-reviewer` `web-design-reviewer` `ux-reviewer` | Review lenses. |
-| Workflow | `review-panel` | Multi-lens review → adversarial verify → synthesis. |
-| MCP | `context7` · `chrome-devtools-mcp` | Version-correct docs · drive a real browser for UI work. |
+| Kind     | Name                                                                             | What it does                                                                                        |
+| -------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Hook     | `format-on-edit`                                                                 | Prettier-formats each file as it's written (venv `ruff` for `.py`). Best-effort, non-blocking.      |
+| Hook     | `guard-destructive`                                                              | Blocks `rm -rf /`, force-push to main/master, `git reset --hard` with no ref.                       |
+| Hook     | `guard-sensitive`                                                                | Sandbox-first gate: blocks prod deploys / publish / project-listed live actions unless `LIVE=1`.    |
+| Hook     | `scan-secrets`                                                                   | Blocks `git commit` when the staged diff adds an env file or secret-looking content.                |
+| Hook     | `require-verification`                                                           | Blocks `gh pr create` when source changed since the last green test run (marker `ws/.verify/PASS`). |
+| Skill    | `/spec` `/research` `/autopilot`                                                 | Frame → research (→ `docs/domain/`) → refine (grounded, gated), then self-drive.                    |
+| Skill    | `/commit` `/pr` `/review` `/test` `/format` `/ship`                              | The build→ship lifecycle.                                                                           |
+| Skill    | `/ux-review` `/ux-cycle`                                                         | Live UX review of the running web app, and the review→fix→re-review loop to a PR.                   |
+| Skill    | `/integrate`                                                                     | Wire an external service safely (sandbox-first, secrets in env).                                    |
+| Skill    | `/tickets`                                                                       | The work queue (GitHub Issues): status · queue · triage · file · bootstrap. See `TICKETS.md`.       |
+| Skill    | `/loops`                                                                         | Scheduled-autonomy loops from `loops.yaml` → `/schedule` routines. See `LOOPS.md`.                  |
+| Agent    | `planner` `researcher` `implementer` `tester` `debugger` `integrator` `verifier` | The research/build/verify roster (see ORCHESTRATION.md).                                            |
+| Agent    | `code-reviewer` `security-reviewer` `web-design-reviewer` `ux-reviewer`          | Review lenses.                                                                                      |
+| Workflow | `review-panel`                                                                   | Multi-lens review → adversarial verify → synthesis.                                                 |
+| MCP      | `context7` · `chrome-devtools-mcp`                                               | Version-correct docs · drive a real browser for UI work.                                            |
 
 Plus the globally-installed **superpowers** skills (brainstorming, writing-plans, executing-plans, TDD, systematic-debugging, verification-before-completion, finishing-a-development-branch). The PLAYBOOK + AUTONOMY chain them.
 

@@ -7,7 +7,7 @@ Turn a fuzzy idea into a sharp, durable, **grounded** spec — by asking, not as
 on real domain knowledge, not improvisation. Front door before `/autopilot`. **Self-contained** (no
 plugin required; uses `superpowers:brainstorming` for the interview if present).
 
-It runs in **two passes around research**, because you can't write a good *solution* spec before you
+It runs in **two passes around research**, because you can't write a good _solution_ spec before you
 understand the domain:
 
 ```
@@ -17,7 +17,7 @@ understand the domain:
 State which pass you're in based on the active goal: no goal / `draft` with no answered agenda → **frame**;
 agenda researched and `docs/domain/CONFIRM.md` reviewed → **refine**.
 
-## Pass 1 — FRAME  (capture the product goal + figure out what to learn)
+## Pass 1 — FRAME (capture the product goal + figure out what to learn)
 
 1. Read `CLAUDE.md`, `STATUS.md`, existing `ws/goals/*`, the code. Never ask what the repo answers.
 2. **Interview — one question at a time** (AskUserQuestion), summarizing back so misunderstandings
@@ -32,7 +32,7 @@ agenda researched and `docs/domain/CONFIRM.md` reviewed → **refine**.
 4. **Stop. Tell the user to run `/research` next.** Don't write detailed acceptance criteria, don't
    plan, don't lock — you don't know enough yet.
 
-## Pass 2 — REFINE + LOCK  (write the real, grounded solution spec)
+## Pass 2 — REFINE + LOCK (write the real, grounded solution spec)
 
 1. Read `docs/domain/` (the corpus) and `docs/domain/CONFIRM.md`. If CONFIRM still has unconfirmed
    high-stakes facts, **stop** and ask the user to review them first.
@@ -46,13 +46,14 @@ agenda researched and `docs/domain/CONFIRM.md` reviewed → **refine**.
    agent), grounded on the corpus → `ws/<slug>/plan.md`. **This always works — it's the baseline.**
    Then **preflight the queue** (`/tickets status`: GitHub remote? `gh` authed? labels present?):
    - **Queue ready** → mirror the plan into the goal's **milestone** as issues (one `type:task
-     source:spec` per task, priority, `ready`; `depends on #N` + `blocked` for deps). Issues become the
+source:spec` per task, priority, `ready`; `depends on #N` + `blocked` for deps). Issues become the
      working queue; `plan.md` stays the human-readable overview.
    - **Queue not ready** (local-only / no `gh` / no labels) → fine: **`plan.md` IS the queue.** Say so,
      and note the user can `/tickets bootstrap` once a remote exists. **Never block on the queue.**
 5. Tell the user it's `ready`, point at the work list (`/tickets queue`, or `plan.md`), and offer `/autopilot`.
 
 ## Rules
+
 - **Align before building; ground before specifying.** A wrong assumption — or a missing domain fact —
   costs a whole autopilot run.
 - Don't invent answers to product forks or domain facts: forks go to the user (Open questions); facts

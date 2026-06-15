@@ -25,6 +25,7 @@ Add an integration without leaking secrets or touching anything live.
    to go live, links. Append a `ws/journal.md` entry, and an ADR if it's a notable choice.
 
 ## Rules
+
 - The default state of any new integration is **cannot move money / cannot mutate live data**.
 - Going live is a human checkpoint — surface it, never flip it yourself.
 - Mock the network in tests; never hit a live endpoint in CI.

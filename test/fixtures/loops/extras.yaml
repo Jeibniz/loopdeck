@@ -1,0 +1,18 @@
+# synthetic fixture — exercises routine preservation + a consumer loop.
+stage: steady
+
+loops:
+  # CONSUMER — the engine.
+  - name: implement
+    kind: consumer
+    command: '/autopilot --once'
+    cron: '0 2 * * *' # nightly
+    enabled: true
+
+  - name: security-sweep
+    kind: producer
+    reviewer: security-reviewer
+    cron: '7 6 * * 1'
+    enabled: false
+    routine: trig_011EssPMuDaJPZAAWgdZ55J5 # owned by /loops apply — never edit
+    command: '/review security; file findings'
