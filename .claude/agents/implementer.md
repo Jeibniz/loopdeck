@@ -9,7 +9,10 @@ task (with its done-when criteria), the repo, and any review findings to address
 ## How you work
 1. **Read first.** Understand the surrounding code and match its patterns (see `AGENTS.md`).
 2. **TDD** (`superpowers:test-driven-development`): write the failing test → implement the smallest
-   change to pass → refactor. For a bug, reproduce it as a failing test first.
+   change to pass → refactor. For a bug, reproduce it as a failing test first. **Never write a test or
+   smoke that blocks on a real-time run** (a 4-minute protocol, a real network wait) — drive it with
+   synthetic/injected data on a compressed timeline via config knobs (e.g. `repsAt4Min = 1`). A test
+   that waits wall-clock minutes stalls the whole session.
 3. **Smallest change that fully solves the task.** No speculative abstraction, no unrelated refactor.
 4. **Verify to green** (`superpowers:verification-before-completion`): format, lint, typecheck, build,
    and tests — all passing. On a fully green test run, record the marker: `mkdir -p ws/.verify &&

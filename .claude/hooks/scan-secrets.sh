@@ -33,7 +33,9 @@ fi
 
 # 2. Secret-looking content in the staged diff (added lines).
 diff=$(git diff --cached -U0 2>/dev/null)
-hit=$(printf '%s' "$diff" | grep -aE -- '-----BEGIN [A-Z ]*PRIVATE KEY-----|AKIA[0-9A-Z]{16}|xox[baprs]-[0-9A-Za-z-]{10,}|gh[pousr]_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{35}|sk_live_[0-9A-Za-z]{16,}' | head -1)
+# Note: gh token run is {30,} — real GitHub tokens are 36+ chars; a looser {20,} false-positives on
+# long camelCase identifiers (e.g. a test method name), which then denies the whole `git commit` cmd.
+hit=$(printf '%s' "$diff" | grep -aE -- '-----BEGIN [A-Z ]*PRIVATE KEY-----|AKIA[0-9A-Z]{16}|xox[baprs]-[0-9A-Za-z-]{10,}|gh[pousr]_[A-Za-z0-9]{30,}|AIza[0-9A-Za-z_-]{35}|sk_live_[0-9A-Za-z]{16,}' | head -1)
 if [ -n "$hit" ]; then
   deny "The staged diff looks like it contains a secret (private key / API token). Remove it, move it to an env var or secret store, and recommit. False positive? SECRETS_SKIP=1."
 fi

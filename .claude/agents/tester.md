@@ -16,6 +16,8 @@ Focus:
 - **Reproduce bugs as tests first** — a failing test that demonstrates the bug, so the fix is provable.
 - **Behavior/contract, not internals** — so refactors don't break the suite needlessly.
 - **Fast and deterministic** — mock network/clock/randomness; no live endpoints; no flaky sleeps.
+  **Never block on a real-time run** (a multi-minute protocol, a real wait) — compress it with injected
+  data and config knobs (e.g. `repsAt4Min = 1`) so seconds of test time cover minutes of behavior.
 
 Match the project's test framework and conventions (Vitest/Jest/pytest/etc. — read an existing test
 first). Run the tests you write; on green, `mkdir -p ws/.verify && touch ws/.verify/PASS` and paste
